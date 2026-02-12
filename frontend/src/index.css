@@ -1,1 +1,10 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+
+/* Optional: Add these utility classes if you don't want to configure Tailwind config */
+.font-serif-heading {
+  font-family: 'Merriweather', serif;
+}
+.font-sans {
+  font-family: 'Inter', sans-serif;
+}
