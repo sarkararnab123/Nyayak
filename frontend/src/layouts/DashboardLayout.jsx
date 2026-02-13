@@ -8,20 +8,23 @@ const DashboardLayout = ({ children }) => {
   const { isDark, toggleTheme } = useTheme();
 
   return (
-    // Base Background: Light Gray (#F3F4F6) -> Dark Navy (#0B1120)
     <div className="min-h-screen bg-[#F3F4F6] dark:bg-[#0B1120] transition-colors duration-300">
       <Sidebar 
         isCollapsed={isSidebarCollapsed} 
         toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
       />
 
+      {/* FIXED MARGIN LOGIC:
+         Sidebar is w-64 (256px). Margin must be ml-64.
+         Sidebar collapsed is w-20 (80px). Margin must be ml-20.
+      */}
       <div 
         className={`min-h-screen flex flex-col transition-all duration-300 ease-in-out ${
-          isSidebarCollapsed ? "ml-20" : "ml-72"
+          isSidebarCollapsed ? "ml-20" : "ml-64"
         }`}
       >
         {/* Header */}
-        <header className="h-20 bg-white dark:bg-[#111827] border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40 px-8 flex items-center justify-between transition-colors duration-300">
+        <header className="h-16 bg-white dark:bg-[#111827] border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40 px-8 flex items-center justify-between transition-colors duration-300">
           
           <div className="relative w-96">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
