@@ -2,6 +2,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/Login"; // Ensure naming matches your file (Login vs LoginPage)
 import SignupPage from "./pages/SignupPage";
+import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
 import SafetyMap from "./pages/SafetyMap";
 
@@ -23,6 +24,8 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
 
             {/* 🔒 PROTECTED ROUTES */}
             
