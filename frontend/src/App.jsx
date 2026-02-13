@@ -1,12 +1,13 @@
-import { Routes, Route, BrowserRouter, Outlet } from "react-router-dom"; // Import Outlet
+import { Routes, Route, BrowserRouter, Outlet } from "react-router-dom";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
-import LoginPage from "./pages/Login"; 
+import LoginPage from "./pages/Login";
 import SignupPage from "./pages/SignupPage";
 import Dashboard from "./pages/Dashboard";
 import SafetyMap from "./pages/SafetyMap";
 import Profile from "./pages/Profile";
+import Chat from "./pages/Chat"; // ✅ Chat added
 
 // Contexts
 import { ThemeProvider } from "./context/themeContext";
@@ -19,27 +20,30 @@ import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider> 
+      <AuthProvider>
         <BrowserRouter>
           <Routes>
-            
-            {/* PUBLIC ROUTES */}
+
+            {/* ================= PUBLIC ROUTES ================= */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
 
-            {/* 🔒 PROTECTED APP SHELL */}
-            {/* This single Route wraps ALL protected pages with Layout & Auth Check */}
-            <Route element={
-              <ProtectedRoute>
-                <DashboardLayout>
-                  <Outlet /> {/* This renders the specific child route (Dashboard, Map, Profile) */}
-                </DashboardLayout>
-              </ProtectedRoute>
-            }>
+            {/* ================= PROTECTED ROUTES ================= */}
+            {/* Wrapped with Auth check + Dashboard Layout */}
+            <Route
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <Outlet />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              }
+            >
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/map" element={<SafetyMap />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/chat" element={<Chat />} /> {/* ✅ Chat route */}
             </Route>
 
           </Routes>
