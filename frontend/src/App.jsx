@@ -7,7 +7,7 @@ import SignupPage from "./pages/SignupPage";
 import Dashboard from "./pages/Dashboard";
 import SafetyMap from "./pages/SafetyMap";
 import Profile from "./pages/Profile";
-
+import ProfileLayout from "./layouts/ProfileLayout";
 // Contexts
 import { ThemeProvider } from "./context/themeContext";
 import { AuthProvider } from "./context/Authcontext";
@@ -35,11 +35,22 @@ function App() {
                 <DashboardLayout>
                   <Outlet /> {/* This renders the specific child route (Dashboard, Map, Profile) */}
                 </DashboardLayout>
+                
               </ProtectedRoute>
             }>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/map" element={<SafetyMap />} />
+            </Route>
+             <Route element={
+              <ProtectedRoute>
+                <ProfileLayout>
+                  <Outlet />
+                </ProfileLayout>
+              </ProtectedRoute>
+            }>
+              {/* ✅ ADD PROFILE HERE */}
               <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/security" element={<div className="p-10">Security Settings (Coming Soon)</div>} />
             </Route>
 
           </Routes>
