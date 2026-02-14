@@ -1,12 +1,18 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: 'class', // <--- THIS IS MISSING. ADD IT.
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sora: ['Sora', 'sans-serif'],
+        jakarta: ['Plus Jakarta Sans', 'sans-serif'],
+        sans: ['Sora', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 }
