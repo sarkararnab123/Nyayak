@@ -37,6 +37,7 @@ import PaymentPage from "./pages/PaymentPage";
 import LawyerCaseRequests from "./pages/lawyer/CaseRequest";
 import LawyerDocket from "./pages/lawyer/CaseManagement";
 import CaseDrafts from "./pages/dashboards/CaseDrafts";
+import PaymentSuccess from "./pages/PaymentSuccess";
 function App() {
   return (
     <ThemeProvider>
@@ -48,6 +49,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
 
             <Route
               element={
