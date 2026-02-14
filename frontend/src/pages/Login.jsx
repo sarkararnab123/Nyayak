@@ -23,10 +23,13 @@ const LoginPage = () => {
         setError("");
         setIsLoading(true);
         try {
-            const { user, session } = await login(data);
-            if (user || session) {
+            const response = await login(data);
+            if (response?.user || response?.session) {
                 toast.success("Welcome back!");
-                const role = user?.user_metadata?.role || session?.user?.user_metadata?.role;
+                // Get role from response or from user metadata
+                const user = response?.user || response?.session?.user;
+                const role = user?.user_metadata?.role || 'citizen';
+                
                 if (role === 'police') navigate('/police-dashboard', { replace: true });
                 else if (role === 'lawyer') navigate('/lawyer/legal-dashboard', { replace: true });
                 else navigate('/dashboard', { replace: true });

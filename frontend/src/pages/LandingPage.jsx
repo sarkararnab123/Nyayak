@@ -1,9 +1,11 @@
 import React from 'react';
+import { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import HeroSection from '../components/heroSection';
 import LegalBentoGrid from '../components/LegalBentoGrid'; // Import the new grid
 import Footer from '../components/Footer';
 import { useTheme } from '../context/themeContext';
+import { useAuth } from '../context/Authcontext';
 import { useNavigate } from "react-router-dom";
 
 
@@ -11,6 +13,31 @@ const scalesBgUrl = "/scale.png";
 
 const LandingPage = () => {
   const { isDark } = useTheme();
+  const { user, userRole, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect logged-in users to their dashboard
+  useEffect(() => {
+    if (!loading && user) {
+      const role = userRole || 'citizen';
+      if (role === 'police') {
+        navigate('/police-dashboard', { replace: true });
+      } else if (role === 'lawyer') {
+        navigate('/lawyer/legal-dashboard', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
+    }
+  }, [user, userRole, loading, navigate]);
+
+  // Show loading screen while checking auth and redirecting
+  if (loading || (user && !loading)) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-[#0B1120]' : 'bg-[#FFFAF0]'}`}>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen transition-colors duration-500 font-sans overflow-hidden relative ${isDark ? 'bg-[#0B1120] text-slate-100' : 'bg-[#FFFAF0] text-slate-900'}`}>
