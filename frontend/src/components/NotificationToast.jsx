@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CheckCircle, Info, AlertCircle, X, ExternalLink } from "lucide-react";
+import { Check, Info, AlertCircle, X, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const NotificationToast = ({ notification, onClose }) => {
@@ -32,7 +32,7 @@ const NotificationToast = ({ notification, onClose }) => {
 
   // Icon Mapping
   const icons = {
-    success: <CheckCircle className="w-6 h-6 text-green-500" />,
+    success: <Check className="w-6 h-6 text-green-500" />,
     info: <Info className="w-6 h-6 text-blue-500" />,
     error: <AlertCircle className="w-6 h-6 text-red-500" />
   };
