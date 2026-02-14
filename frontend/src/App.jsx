@@ -13,6 +13,7 @@ import PoliceLayout from "./layouts/PoliceLayout";
 
 import LawyerDashboard from "./pages/lawyer/LawyerDashboard";
 import CaseManagement from "./pages/lawyer/CaseManagement";
+import CaseDetails from "./pages/CaseDetails";
 
 /* ================= LAYOUTS ================= */
 import DashboardLayout from "./layouts/DashboardLayout";
@@ -27,7 +28,8 @@ import { AuthProvider } from "./context/Authcontext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PoliceDashboard from "./pages/police/PoliceDashboard";
 import ComplaintPage from "./pages/ComplaintPage";
-
+/* ================= PAYMENT ================= */
+import PaymentPage from "./pages/PaymentPage";
 function App() {
   return (
     <ThemeProvider>
@@ -88,6 +90,8 @@ function App() {
               <Route path="/map" element={<SafetyMap />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/complaint" element={<ComplaintPage/>} />
+              <Route path="/payment" element={<PaymentPage />} />
+              <Route path="/cases" element={<CaseDetails />} />
             </Route>
 
             {/* ================= PROFILE ROUTES ================= */}
