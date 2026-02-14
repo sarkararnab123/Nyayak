@@ -11,10 +11,11 @@ import Chat from "./pages/Chat";
 import Profile from "./pages/Profile";
 import PoliceLayout from "./layouts/PoliceLayout";
 import IncidentReports from "./pages/police/IncidentReports";
+import PoliceProfile from "./pages/police/PoliceProfile";
 
 import LawyerDashboard from "./pages/lawyer/LawyerDashboard";
-import CaseManagement from "./pages/lawyer/CaseManagement";
 import CaseDetails from "./pages/dashboards/CaseDetails";
+import ProfileRouter from "./pages/ProfileRouter";
 
 /* ================= LAYOUTS ================= */
 import DashboardLayout from "./layouts/DashboardLayout";
@@ -24,17 +25,20 @@ import ProfileLayout from "./layouts/ProfileLayout";
 /* ================= CONTEXT ================= */
 import { ThemeProvider } from "./context/themeContext";
 import { AuthProvider } from "./context/Authcontext";
-import LawyerProfile from "./pages/dashboards/LawyerDetails";
+// removed duplicate LawyerProfile import from LawyerDetails
 
 /* ================= ROUTE PROTECTION ================= */
 import ProtectedRoute from "./components/ProtectedRoute";
 import PoliceDashboard from "./pages/police/PoliceDashboard";
-import ComplaintPage from "./pages/ComplaintPage";
+import ComplaintPage from "./pages/dashboards/ComplaintPage";
 import EmergencyLogs from "./pages/EmergencyLogs";
 import FindLawyer from "./pages/dashboards/FindLawyer";
 
 /* ================= PAYMENT ================= */
 import PaymentPage from "./pages/PaymentPage";
+import LawyerCaseRequests from "./pages/lawyer/CaseRequest";
+import LawyerDocket from "./pages/lawyer/CaseManagement";
+import CaseDrafts from "./pages/dashboards/CaseDrafts";
 import PaymentSuccess from "./pages/PaymentSuccess";
 function App() {
   return (
@@ -60,6 +64,7 @@ function App() {
             >
               <Route path="/police-dashboard" element={<PoliceDashboard />} />
               <Route path="/police/reports" element={<IncidentReports/>} />
+              <Route path="/police/profile" element={<PoliceProfile/>} />
               {/* Add other police pages here later */}
             </Route>
 
@@ -77,10 +82,10 @@ function App() {
                 path="/lawyer/legal-dashboard"
                 element={<LawyerDashboard />}
               />
-
+              <Route path="/lawyer/requests" element={<LawyerCaseRequests/>} />
               <Route
                 path="/lawyer/cases"
-                element={<CaseManagement />}
+                element={<LawyerDocket />}
               />
             </Route>
 
@@ -102,6 +107,8 @@ function App() {
               <Route path="/find-lawyer" element={<FindLawyer/>} />
               <Route path="/payment" element={<PaymentPage />} />
               <Route path="/cases" element={<CaseDetails />} />
+              <Route path="/case-drafts" element={<CaseDrafts/>} />
+              {/* <Route path="/" */}
             </Route>
 
             {/* ================= PROFILE ROUTES ================= */}
@@ -114,7 +121,7 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile" element={<ProfileRouter />} />
               <Route
                 path="/profile/security"
                 element={
