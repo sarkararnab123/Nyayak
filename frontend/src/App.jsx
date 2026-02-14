@@ -10,6 +10,7 @@ import SafetyMap from "./pages/SafetyMap";
 import Chat from "./pages/Chat";
 import Profile from "./pages/Profile";
 import PoliceLayout from "./layouts/PoliceLayout";
+import IncidentReports from "./pages/police/IncidentReports";
 
 import LawyerDashboard from "./pages/lawyer/LawyerDashboard";
 import CaseManagement from "./pages/lawyer/CaseManagement";
@@ -27,6 +28,8 @@ import { AuthProvider } from "./context/Authcontext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PoliceDashboard from "./pages/police/PoliceDashboard";
 import ComplaintPage from "./pages/ComplaintPage";
+import EmergencyLogs from "./pages/EmergencyLogs";
+import FindLawyer from "./pages/lawyer/FindLawyer";
 
 function App() {
   return (
@@ -50,6 +53,7 @@ function App() {
               }
             >
               <Route path="/police-dashboard" element={<PoliceDashboard />} />
+              <Route path="/police/reports" element={<IncidentReports/>} />
               {/* Add other police pages here later */}
             </Route>
 
@@ -88,6 +92,8 @@ function App() {
               <Route path="/map" element={<SafetyMap />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/complaint" element={<ComplaintPage/>} />
+              <Route path="/emergency-logs" element={<EmergencyLogs/>} />
+              <Route path="/find-lawyer" element={<FindLawyer/>} />
             </Route>
 
             {/* ================= PROFILE ROUTES ================= */}

@@ -9,7 +9,8 @@ import {
   FileText, 
   Map, 
   MessageSquare,
-  FilePlus // New Icon for Complaint
+  FilePlus, // New Icon for Complaint
+  Logs
 } from "lucide-react";
 import { useAuth } from "../context/Authcontext";
 
@@ -19,6 +20,7 @@ const CITIZEN_LINKS = [
   { icon: FileText, label: "My Cases", path: "/cases" },
   { icon: Map, label: "Safety Map", path: "/map" },
   { icon: MessageSquare, label: "Legal Assistant", path: "/chat" },
+  {icon : Logs, label : "Emergency Logs", path : "/emergency-logs"}
 ];
 
 const Sidebar = ({ isCollapsed, toggleSidebar, links = CITIZEN_LINKS, roleLabel = "Citizen" }) => {
@@ -75,6 +77,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar, links = CITIZEN_LINKS, roleLabel 
           <NavLink
             key={item.path}
             to={item.path}
+            onClick={toggleSidebar}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-[15px] font-bold transition-all duration-200 group relative
               ${isActive
