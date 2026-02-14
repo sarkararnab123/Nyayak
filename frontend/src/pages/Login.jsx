@@ -1,48 +1,38 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../context/Authcontext"; // <--- FIXED CASING
+import { useAuth } from "../context/Authcontext"; 
 import { Scale, Lock, Mail, ArrowRight, Shield, User, Briefcase } from "lucide-react";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
+import justiceBg from "../assets/justice-bg.jpg";
 
 const LoginPage = () => {
     const [error, setError] = useState("");
     const navigate = useNavigate();
-    
     const { register, handleSubmit, formState: { errors }, setValue } = useForm({
         mode: "onBlur"
     });
     
     const auth = useAuth();
     const login = auth?.login;
-    const loginWithGoogle = auth?.loginWithGoogle;
-
     const [isLoading, setIsLoading] = useState(false);
 
     const loginUser = async (data) => {
-        if (!login) {
-            console.error("Auth context is missing!");
-            return;
-        }
+        if (!login) return;
         setError("");
         setIsLoading(true);
         try {
-            const { user, session } = await login(data); // Get user/session from response
-            
-            if (user || session) {
+            const response = await login(data);
+            if (response?.user || response?.session) {
                 toast.success("Welcome back!");
+                // Get role from response or from user metadata
+                const user = response?.user || response?.session?.user;
+                const role = user?.user_metadata?.role || 'citizen';
                 
-                // --- LOGIC: CHECK ROLE & REDIRECT ---
-                // We check the metadata stored in Supabase Auth
-                const role = user?.user_metadata?.role || session?.user?.user_metadata?.role;
-
-                if (role === 'police') {
-                    navigate('/police/profile', { replace: true });
-                } else if (role === 'lawyer') {
-                    navigate('/profile', { replace: true });
-                } else {
-                    navigate('/dashboard', { replace: true });
-                }
+                if (role === 'police') navigate('/police-dashboard', { replace: true });
+                else if (role === 'lawyer') navigate('/lawyer/legal-dashboard', { replace: true });
+                else navigate('/dashboard', { replace: true });
             }
         } catch (error) {
             setError(error.message);
@@ -52,141 +42,186 @@ const LoginPage = () => {
         }
     };
 
-    const handleGoogleLogin = async () => {
-        if (!loginWithGoogle) return;
-        try {
-            await loginWithGoogle();
-        } catch (error) {
-            console.log(error);
-            toast.error("Google Login Failed");
-        }
-    };
-
     const handleDemoLogin = (role) => {
-        if (role === 'citizen') {
-            setValue("email", "citizen@demo.com"); 
-            setValue("password", "pass1234");      
-        } else if (role === 'police') {
-            setValue("email", "officer@police.gov.in"); 
-            setValue("password", "pass1234");       
-        } else {
-            setValue("email", "advocate@law.com"); 
-            setValue("password", "pass1234");       
-        }
+        const credentials = {
+            citizen: ["citizen@demo.com", "pass1234"],
+            police: ["officer@police.gov.in", "pass1234"],
+            lawyer: ["advocate@law.com", "pass1234"]
+        };
+        setValue("email", credentials[role][0]);
+        setValue("password", credentials[role][1]);
     };
 
     return (
-        <div className="min-h-screen w-full flex bg-[#FFFAF0]">
-            {/* LEFT SIDE: BRANDING */}
-            <div className="hidden lg:flex w-1/2 bg-[#0B1120] relative flex-col justify-between p-12 overflow-hidden">
-                <div className="absolute inset-0 opacity-20" 
-                     style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '32px 32px' }}>
-                </div>
+        <div className="min-h-screen w-full flex bg-[#FFFAF0] font-sans">
+            
+            {/* LEFT SIDE: BRANDING (INSANE LEVEL CONSISTENCY) */}
+            <div className="hidden lg:flex w-1/2 relative flex-col justify-between p-16 overflow-hidden">
+                <motion.div
+                    initial={{ scale: 1.15, opacity: 0 }}
+                    animate={{ scale: 1.05, opacity: 1 }}
+                    transition={{ duration: 2.5, ease: "easeOut" }}
+                    className="absolute inset-0 bg-cover bg-[center_top]"
+                    style={{ backgroundImage: `url(${justiceBg})` }}
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-b from-[#0B1120]/95 via-[#0B1120]/80 to-[#0B1120]/95"></div>
+
+                {/* Light Sweep Animation */}
+                <motion.div 
+                    animate={{ x: [-600, 1200], opacity: [0, 0.2, 0] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12"
+                />
+
                 <div className="relative z-10">
-                    <div className="flex items-center gap-2 mb-8">
-                        <div className="p-2 bg-orange-500/20 rounded-lg">
-                            <Scale className="w-6 h-6 text-orange-500" />
+                    <motion.div
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="flex items-center gap-3 mb-12"
+                    >
+                        <div className="p-3 bg-orange-500/20 rounded-xl backdrop-blur-md border border-orange-500/30">
+                            <Scale className="w-8 h-8 text-orange-500" />
                         </div>
-                        {/* <span className="text-2xl font-bold text-white tracking-tight">NyayaSahayak</span> */}
-                    </div>
-                    <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
-                        Not sure what to put here <br/>
-                        {/* at the speed of <span className="text-orange-500">Trust.</span> */}
-                    </h1>
-                    {/* <p className="text-slate-400 text-lg max-w-md">
-                        Secure access for Citizens, Law Enforcement, and Judiciary professionals.
-                    </p> */}
+                        <span className="text-2xl font-black text-white tracking-tighter">NYAYA<span className="text-orange-500">SAHAYAK</span></span>
+                    </motion.div>
+
+                    <motion.h1 
+                        initial={{ y: 30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-6xl font-extrabold text-white mb-8 leading-[1.1] tracking-tight"
+                    >
+                        Securing Truth, <br />
+                        <motion.span 
+                            initial={{ backgroundPosition: '-200% 0' }}
+                            animate={{ backgroundPosition: '200% 0' }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                            className="text-orange-500 bg-gradient-to-r from-orange-500 via-white/80 to-orange-500 bg-[length:200%_auto] bg-clip-text text-transparent"
+                        >
+                            Delivering Justice.
+                        </motion.span>
+                    </motion.h1>
+
+                    <motion.div
+                        initial={{ x: -30, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="relative pl-6 border-l-2 border-orange-500/50"
+                    >
+                        <p className="text-slate-400 text-xl max-w-md leading-relaxed font-light italic">
+                            Official portal for Citizens, Law Enforcement, and Legal professionals.
+                        </p>
+                    </motion.div>
                 </div>
-                <div className="relative z-10">
-                    <blockquote className="text-slate-500 italic border-l-2 border-orange-500 pl-4">
+
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.8 }}
+                    className="relative z-10"
+                >
+                    <blockquote className="text-slate-500 text-sm tracking-[0.3em] uppercase font-bold flex items-center gap-4">
+                        <div className="h-px w-8 bg-slate-800"></div>
                         "Satyameva Jayate"
                     </blockquote>
-                </div>
+                </motion.div>
+
+                {/* Ambient Glow */}
+                <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-orange-600/10 blur-[120px] rounded-full"></div>
             </div>
 
             {/* RIGHT SIDE: FORM */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
-                <div className="w-full max-w-md space-y-8">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-16">
+                <motion.div 
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="w-full max-w-md space-y-8"
+                >
                     <div className="text-center lg:text-left">
-                        <h2 className="text-3xl font-bold text-slate-900">Sign in to your account</h2>
-                        <p className="mt-2 text-slate-600">
-                            Or <Link to="/signup" className="font-bold text-orange-600 hover:text-orange-500">create a new account</Link>
+                        <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Sign in</h2>
+                        <p className="mt-3 text-slate-500 font-medium">
+                            Or <Link to="/signup" className="text-orange-600 hover:underline decoration-2 underline-offset-4">create a new account</Link>
                         </p>
                     </div>
 
                     <form onSubmit={handleSubmit(loginUser)} className="mt-8 space-y-6">
                         <div className="space-y-1">
-                            <label className="text-sm font-semibold text-slate-700">Email Address</label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-2 block">Email Address</label>
+                            <div className="relative group">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-orange-500 transition-colors" />
                                 <input 
                                     type="email"
-                                    className="w-full h-12 pl-10 pr-4 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                                    className="w-full h-14 pl-12 pr-4 bg-white border-2 border-slate-100 rounded-2xl focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 outline-none transition-all font-medium"
                                     placeholder="name@email.com"
                                     {...register("email", { required: "Email is required" })}
                                 />
                             </div>
-                            {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
+                            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-sm font-semibold text-slate-700">Password</label>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-2 block">Password</label>
+                            <div className="relative group">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-orange-500 transition-colors" />
                                 <input 
                                     type="password"
-                                    className="w-full h-12 pl-10 pr-4 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                                    className="w-full h-14 pl-12 pr-4 bg-white border-2 border-slate-100 rounded-2xl focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 outline-none transition-all font-medium"
                                     placeholder="••••••••"
                                     {...register("password", { required: "Password is required" })}
                                 />
                             </div>
-                            {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
+                            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
                         </div>
 
                         {error && (
-                            <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 bg-red-600 rounded-full"></span>
+                            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-4 bg-red-50 text-red-600 text-sm rounded-xl border border-red-100 flex items-center gap-3">
+                                <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></div>
                                 {error}
-                            </div>
+                            </motion.div>
                         )}
 
-                        <button 
+                        <motion.button 
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.98 }}
                             type="submit" 
                             disabled={isLoading}
-                            className="w-full h-12 bg-slate-900 hover:bg-black text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                            className="w-full h-14 bg-[#0B1120] hover:bg-black text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-3 shadow-xl shadow-slate-200"
                         >
-                            {isLoading ? "Signing in..." : "Sign in"}
+                            {isLoading ? "Authenticating..." : "Sign in"}
                             {!isLoading && <ArrowRight className="w-4 h-4" />}
-                        </button>
+                        </motion.button>
                     </form>
 
-                    <div className="mt-8">
-                        <div className="relative">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-slate-200"></div>
-                            </div>
-                            <div className="relative flex justify-center text-sm">
-                                <span className="px-2 bg-[#FFFAF0] text-slate-500">Quick Demo Login</span>
-                            </div>
+                    <div className="mt-10">
+                        <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-[0.2em]">
+                            <span className="px-4 bg-[#FFFAF0] text-slate-400 relative z-10">Quick Demo Access</span>
+                            <div className="absolute inset-0 top-1/2 -translate-y-1/2 border-t border-slate-200"></div>
                         </div>
 
-                        <div className="mt-6 grid grid-cols-3 gap-3">
-                            <DemoButton icon={<User className="w-4 h-4" />} label="Citizen" onClick={() => handleDemoLogin('citizen')} />
-                            <DemoButton icon={<Shield className="w-4 h-4" />} label="Police" onClick={() => handleDemoLogin('police')} />
-                            <DemoButton icon={<Briefcase className="w-4 h-4" />} label="Lawyer" onClick={() => handleDemoLogin('lawyer')} />
+                        <div className="mt-6 grid grid-cols-3 gap-4">
+                            <DemoButton icon={<User className="w-5 h-5" />} label="Citizen" onClick={() => handleDemoLogin('citizen')} />
+                            <DemoButton icon={<Shield className="w-5 h-5" />} label="Police" onClick={() => handleDemoLogin('police')} />
+                            <DemoButton icon={<Briefcase className="w-5 h-5" />} label="Lawyer" onClick={() => handleDemoLogin('lawyer')} />
                         </div>
                     </div>
-                </div>
+                </motion.div>
             </div>
         </div>
     );
 };
 
 const DemoButton = ({ icon, label, onClick }) => (
-    <button type="button" onClick={onClick} className="flex flex-col items-center justify-center p-3 border border-slate-200 bg-white hover:border-orange-300 hover:bg-orange-50 rounded-xl transition-all group">
-        <div className="mb-1 text-slate-400 group-hover:text-orange-600">{icon}</div>
-        <span className="text-xs font-semibold text-slate-600 group-hover:text-orange-700">{label}</span>
-    </button>
+    <motion.button 
+        whileHover={{ y: -3, backgroundColor: '#FFF' }}
+        whileTap={{ scale: 0.95 }}
+        type="button" 
+        onClick={onClick} 
+        className="flex flex-col items-center justify-center p-4 border-2 border-slate-100 bg-white/50 hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/10 rounded-2xl transition-all group"
+    >
+        <div className="mb-2 text-slate-400 group-hover:text-orange-500 transition-colors">{icon}</div>
+        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider group-hover:text-orange-700">{label}</span>
+    </motion.button>
 );
 
 export default LoginPage;
