@@ -7,14 +7,19 @@ import SignupPage from "./pages/SignupPage";
 import ContactPage from "./Contact-page";
 import AboutPage from "./pages/About";
 
+import { NotificationProvider } from "./context/NotificationContext";
 import Dashboard from "./pages/Dashboard";
-import MyCases from "./pages/myCases";
 import SafetyMap from "./pages/SafetyMap";
 import Chat from "./pages/Chat";
 import Profile from "./pages/Profile";
+import PoliceLayout from "./layouts/PoliceLayout";
+import IncidentReports from "./pages/police/IncidentReports";
+import PoliceProfile from "./pages/police/PoliceProfile";
 
 import LawyerDashboard from "./pages/lawyer/LawyerDashboard";
-import CaseManagement from "./pages/lawyer/CaseManagement";
+import CaseDetails from "./pages/citizen/CaseDetails";
+import ProfileRouter from "./pages/ProfileRouter";
+import MyCases from "./pages/citizen/citizencases";
 
 /* ================= LAYOUTS ================= */
 import DashboardLayout from "./layouts/DashboardLayout";
@@ -24,15 +29,29 @@ import ProfileLayout from "./layouts/ProfileLayout";
 /* ================= CONTEXT ================= */
 import { ThemeProvider } from "./context/themeContext";
 import { AuthProvider } from "./context/Authcontext";
+// removed duplicate LawyerProfile import from LawyerDetails
 
 /* ================= ROUTE PROTECTION ================= */
 import ProtectedRoute from "./components/ProtectedRoute";
+import PoliceDashboard from "./pages/police/PoliceDashboard";
+import ComplaintPage from "./pages/citizen/ComplaintPage";
+import EmergencyLogs from "./pages/EmergencyLogs";
+import FindLawyer from "./pages/citizen/FindLawyer";
+import Casedetails from "./pages/lawyer/FiledCaseDetail";
 
+/* ================= PAYMENT ================= */
+import PaymentPage from "./pages/PaymentPage";
+import LawyerCaseRequests from "./pages/lawyer/CaseRequest";
+import LawyerDocket from "./pages/lawyer/CaseManagement";
+import CaseDrafts from "./pages/citizen/CaseDrafts";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import Schedule from "./pages/lawyer/schedule/Schedule";
 function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
+        <NotificationProvider>
           <Routes>
 
             {/* ================= PUBLIC ROUTES ================= */}
@@ -42,6 +61,22 @@ function App() {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/about" element={<AboutPage />} />
 
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+
+            <Route
+              element={
+                <ProtectedRoute>
+                  <PoliceLayout>
+                    <Outlet />
+                  </PoliceLayout>
+                </ProtectedRoute>
+              }
+            >
+              <Route path="/police-dashboard" element={<PoliceDashboard />} />
+              <Route path="/police/reports" element={<IncidentReports/>} />
+              <Route path="/police/profile" element={<PoliceProfile/>} />
+              {/* Add other police pages here later */}
+            </Route>
 
             {/* ================= LAWYER PROTECTED ROUTES ================= */}
             <Route
@@ -57,10 +92,12 @@ function App() {
                 path="/lawyer/legal-dashboard"
                 element={<LawyerDashboard />}
               />
-
+              <Route path="/lawyer/requests" element={<LawyerCaseRequests/>} />
+              <Route path="/lawyer/case/:id" element={<Casedetails />} />
+              <Route path="/lawyer/schedule" element={<Schedule/>} />
               <Route
                 path="/lawyer/cases"
-                element={<CaseManagement />}
+                element={<LawyerDocket />}
               />
             </Route>
 
@@ -77,7 +114,15 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/map" element={<SafetyMap />} />
               <Route path="/chat" element={<Chat />} />
+              <Route path="/complaint" element={<ComplaintPage/>} />
+              <Route path="/emergency-logs" element={<EmergencyLogs/>} />
+              <Route path="/find-lawyer" element={<FindLawyer/>} />
+              <Route path="/payment" element={<PaymentPage />} />
               <Route path="/cases" element={<MyCases />} />
+
+              <Route path="/cases/:id" element={<CaseDetails />} />
+              <Route path="/case-drafts" element={<CaseDrafts/>} />
+              {/* <Route path="/" */}
             </Route>
 
             {/* ================= PROFILE ROUTES ================= */}
@@ -90,7 +135,7 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile" element={<ProfileRouter />} />
               <Route
                 path="/profile/security"
                 element={
@@ -102,6 +147,7 @@ function App() {
             </Route>
 
           </Routes>
+          </NotificationProvider>
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
