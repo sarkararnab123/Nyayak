@@ -2,48 +2,25 @@
 # NYAYAK - Indian Legal AI Assistant
 # Backend Dependencies
 # ==========================================
-# How to install: pip install -r requirements.txt
-# Python version: 3.8 or higher
-# ==========================================
 
-# ==========================================
 # WEB FRAMEWORK
-# ==========================================
 fastapi>=0.115.0,<0.116
 uvicorn[standard]>=0.32.0,<0.33
 python-multipart>=0.0.22,<0.0.25
 pydantic>=2.5.0,<3.0
 
-# ==========================================
 # LANGUAGE MODEL & NLP
-# ==========================================
-# TinyLlama model for text generation
 transformers>=4.40.0,<4.46
 torch>=2.2.0,<2.4
-# Embedding model for semantic search
 sentence-transformers>=2.7.0,<3.0
+# Only one entry for FAISS (stable Linux version)
 faiss-cpu==1.9.0.post1
-# ==========================================
+
 # RETRIEVAL AUGMENTED GENERATION (RAG)
-# ==========================================
-# LangChain core framework
 langchain==1.2.10
 langchain-core==1.2.13
-# LangChain components
 langchain-community==0.4.1
 langchain-huggingface==1.2.0
-# Vector database for similarity search
-faiss-cpu==1.8.0.post3
 
-# ==========================================
 # UTILITIES
-# ==========================================
 numpy>=1.24.0,<2.0
-
-# ==========================================
-# OPTIONAL: Development Dependencies
-# ==========================================
-# Uncomment if needed for development:
-# pytest>=7.4.0
-# black>=23.0.0
-# pylint>=3.0.0
