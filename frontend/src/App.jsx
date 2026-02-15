@@ -4,6 +4,9 @@ import { Routes, Route, BrowserRouter, Outlet } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/SignupPage";
+import ContactPage from "./Contact-page";
+import AboutPage from "./pages/About";
+
 import { NotificationProvider } from "./context/NotificationContext";
 import Dashboard from "./pages/Dashboard";
 import SafetyMap from "./pages/SafetyMap";
@@ -55,6 +58,9 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/about" element={<AboutPage />} />
+
             <Route path="/payment-success" element={<PaymentSuccess />} />
 
             <Route
