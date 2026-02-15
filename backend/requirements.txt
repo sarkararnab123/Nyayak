@@ -22,7 +22,7 @@ transformers>=4.40.0,<4.46
 torch>=2.2.0,<2.4
 # Embedding model for semantic search
 sentence-transformers>=2.7.0,<3.0
-
+faiss-cpu==1.9.0.post1
 # ==========================================
 # RETRIEVAL AUGMENTED GENERATION (RAG)
 # ==========================================
