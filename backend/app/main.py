@@ -4,6 +4,8 @@ from app.rag.pipeline import ask_question_with_doc
 from pypdf import PdfReader
 import io
 import torch
+import os
+import uvicorn
 
 
 print("CUDA available:", torch.cuda.is_available())
@@ -65,3 +67,7 @@ async def ask(
 
     result = ask_question_with_doc(question, uploaded_text)
     return result
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", "8000"))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port, log_level="info")
