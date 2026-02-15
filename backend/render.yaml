@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: nyayak-backend
+    runtime: python
+    pythonVersion: 3.11
+    
+    # Build & Start commands
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "cd app && uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1"
+    
+    # Environment variables
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+    
+    # FREE TIER CONFIGURATION
+    plan: free
+    region: oregon
+    
+    # Auto-deploy on push
+    autoDeploy: true
+    
+    # Health check (important for free tier to stay awake)
+    healthCheckPath: /
+    healthCheckInterval: 3600
+    
+    # Disk & Memory limits
+    disk: /
+    diskSizeGB: 0.5

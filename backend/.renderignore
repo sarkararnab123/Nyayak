@@ -1,0 +1,39 @@
+# Files and directories to ignore during Render deployment
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+*.egg
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Frontend (if in same repo)
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+
+# Temp files
+tmp*/
+*.log
+
+# Documentation (optional, comment out if needed)
+*.md
