@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -12,14 +12,22 @@ import {
   Gavel,
   Briefcase
 } from "lucide-react";
+import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../context/Authcontext";
 
-// Mock Data
-const stats = [
-  { label: "Active Cases", value: "12", icon: Scale, color: "text-orange-700", bg: "bg-orange-100" },
-  { label: "Pending Requests", value: "5", icon: Users, color: "text-amber-700", bg: "bg-amber-100" },
-  { label: "Hours Billed", value: "34.5", icon: Clock, color: "text-slate-700", bg: "bg-slate-100" },
-  { label: "Success Rate", value: "92%", icon: TrendingUp, color: "text-emerald-700", bg: "bg-emerald-100" },
-];
+const startOfMonthISO = () => {
+  const d = new Date();
+  d.setDate(1);
+  d.setHours(0, 0, 0, 0);
+  return d.toISOString();
+};
+
+const endOfMonthISO = () => {
+  const d = new Date();
+  d.setMonth(d.getMonth() + 1, 0);
+  d.setHours(23, 59, 59, 999);
+  return d.toISOString();
+};
 
 const schedule = [
   { time: "10:00 AM", title: "Bail Hearing: State vs. Kumar", type: "Court", location: "High Court, Room 402" },
@@ -29,6 +37,79 @@ const schedule = [
 
 const LawyerDashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [numbers, setNumbers] = useState({
+    active: 0,
+    pending: 0,
+    hours: 0,
+    successRate: 0
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!user?.id) return;
+      setLoadingStats(true);
+      try {
+        const lawyerId = user.id;
+
+        const [
+          activeRes,
+          pendingRes,
+          closedRes,
+          resolvedRes,
+          eventsRes
+        ] = await Promise.all([
+          supabase.from("cases").select("id", { count: "exact", head: true }).eq("lawyer_id", lawyerId).eq("status", "Active"),
+          supabase.from("cases").select("id", { count: "exact", head: true }).eq("lawyer_id", lawyerId).eq("status", "Pending Acceptance"),
+          supabase.from("cases").select("id", { count: "exact", head: true }).eq("lawyer_id", lawyerId).in("status", ["Resolved", "Closed", "Rejected"]),
+          supabase.from("cases").select("id", { count: "exact", head: true }).eq("lawyer_id", lawyerId).eq("status", "Resolved"),
+          supabase
+            .from("legal_events")
+            .select("start_time,end_time")
+            .eq("lawyer_id", lawyerId)
+            .gte("start_time", startOfMonthISO())
+            .lte("start_time", endOfMonthISO())
+        ]);
+
+        const activeCount = activeRes.count || 0;
+        const pendingCount = pendingRes.count || 0;
+        const closedCount = closedRes.count || 0;
+        const resolvedCount = resolvedRes.count || 0;
+
+        const events = eventsRes.data || [];
+        let minutes = 0;
+        for (const e of events) {
+          const start = e.start_time ? new Date(e.start_time) : null;
+          const end = e.end_time ? new Date(e.end_time) : null;
+          if (start && end && end > start) {
+            minutes += (end - start) / 60000;
+          }
+        }
+        const hours = Math.round((minutes / 60) * 10) / 10;
+        const successRate = closedCount > 0 ? Math.round((resolvedCount / closedCount) * 100) : 0;
+
+        setNumbers({
+          active: activeCount,
+          pending: pendingCount,
+          hours,
+          successRate
+        });
+      } catch (e) {
+        setNumbers({ active: 0, pending: 0, hours: 0, successRate: 0 });
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+    fetchStats();
+  }, [user]);
+
+  const stats = useMemo(() => ([
+    { label: "Active Cases", value: String(numbers.active), icon: Scale, color: "text-orange-700", bg: "bg-orange-100" },
+    { label: "Pending Requests", value: String(numbers.pending), icon: Users, color: "text-amber-700", bg: "bg-amber-100" },
+    { label: "Hours Billed", value: String(numbers.hours), icon: Clock, color: "text-slate-700", bg: "bg-slate-100" },
+    { label: "Success Rate", value: `${numbers.successRate}%`, icon: TrendingUp, color: "text-emerald-700", bg: "bg-emerald-100" },
+  ]), [numbers]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-10">
@@ -49,7 +130,12 @@ const LawyerDashboard = () => {
 
       {/* 2. Stats Grid - Reduced Radius */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat) => (
+        {(loadingStats ? [
+          { label: "Active Cases", value: "—", icon: Scale, color: "text-orange-700", bg: "bg-orange-100" },
+          { label: "Pending Requests", value: "—", icon: Users, color: "text-amber-700", bg: "bg-amber-100" },
+          { label: "Hours Billed", value: "—", icon: Clock, color: "text-slate-700", bg: "bg-slate-100" },
+          { label: "Success Rate", value: "—", icon: TrendingUp, color: "text-emerald-700", bg: "bg-emerald-100" },
+        ] : stats).map((stat) => (
           <div key={stat.label} className="p-5 bg-white dark:bg-slate-800 rounded-lg border border-orange-100/50 dark:border-slate-700 shadow-sm hover:shadow-md hover:shadow-orange-500/5 transition-all group">
             <div className="flex items-center justify-between mb-4">
               <div className={`p-2.5 rounded-md ${stat.bg} ${stat.color} transition-colors`}>
