@@ -6,12 +6,14 @@ services:
     
     # Build & Start commands
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 75"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
     
     # Environment variables
     envVars:
       - key: PYTHON_VERSION
         value: 3.11
+      - key: PYTHONUNBUFFERED
+        value: "1"
     
     # FREE TIER CONFIGURATION
     plan: free
